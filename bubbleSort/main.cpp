@@ -12,7 +12,7 @@ void bubbleSortForLoop(int arr[], int n)
                 int temp = arr[j];
                 arr[j] = arr[j+1];
                 arr[j+1] = temp;
-                
+
                 // Using std swap
                 //std::swap(arr[j], arr[j + 1]);
             }
@@ -23,6 +23,22 @@ void bubbleSortForLoop(int arr[], int n)
 // Bubble sort using an outer while loop and a nested for loop
 void bubbleSortWhileLoop(int arr[], int n)
 {
+    bool isSwapped = true;
+    while (isSwapped)
+    {
+        isSwapped = false;
+        for (int i = 0; i < n-1; i++)
+        {
+            if (arr[i] > arr[i+1])
+            {
+                int temp = arr[i];
+                arr[i] = arr[i+1];
+                arr[i+1] = temp;
+                isSwapped = true;
+            }
+        }
+        n--;
+    }
 }
 
 // Function to print an array
@@ -48,10 +64,11 @@ int main()
 
     printArray(arr1, arr1Length, "Unsorted Array: ");
     bubbleSortForLoop(arr1, arr1Length);
-    //bubbleSortWhileLoop(arr2, arr2Length);
+    printArray(arr1, arr1Length, "Bubble Sort using 2 For loops: ");
 
-    printArray(arr1, arr1Length, "Sorted Array: ");
-    //printArray(arr2, arr2Length);
+    printArray(arr2, arr2Length, "Unsorted Array: ");
+    bubbleSortWhileLoop(arr2, arr2Length);
+    printArray(arr2, arr2Length, "Bubble Sort using while loop and for loop: ");
 
     return 0;
 }
