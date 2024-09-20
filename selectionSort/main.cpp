@@ -2,17 +2,19 @@
 
 void selectionSort(int arr[], int n)
 {
-    for (int i = 1; i <= n-1; i++)
+    for (int i = 0; i < n-1; i++)
     {
-        int j = i-1;
-        int temp = arr[i];
+        int minIndex = i;
 
-        while (j >= 0 && temp < arr[j])
+        for (int j = i+1; j <= n-1; j++)
         {
-            arr[j + 1] = arr[j];
-            j--;
+            if (arr[j] < arr[minIndex])
+            {
+                minIndex = j;
+            }
         }
-        arr[j + 1] = temp;
+
+        std::swap(arr[i], arr[minIndex]);
     }
 }
 
