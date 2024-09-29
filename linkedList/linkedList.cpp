@@ -59,7 +59,7 @@ void LinkedList::deleteNode(int val) {
     if (head == nullptr) return;
 
     Node* current = head;
-    Node* prev = head;
+    Node* prev = nullptr;
 
     // If node to delete is head
     if (head->data == val) {
