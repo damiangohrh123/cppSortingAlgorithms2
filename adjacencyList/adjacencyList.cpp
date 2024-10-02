@@ -44,37 +44,63 @@ void AdjacencyList::addEdge(int i, int j, int weight) {
     // Make sure i and j is within bounds
     if (i < 0 || j < 0 || i >= vertices || j >= vertices) return;
 
-    Node* newNode = new Node(j, weight);
-    newNode->next = list[i];
-    list[i] = newNode;
+    // Add edge from i to j
+    Node* newNode1 = new Node(j, weight);
+    newNode1->next = list[i];
+    list[i] = newNode1;
+
+    // Add edge from j to i
+    Node* newNode2 = new Node(i, weight);
+    newNode2->next = list[j];
+    list[j] = newNode2;
 }
 
 void AdjacencyList::removeEdge(int i, int j) {
-    // Make sure i and j is within bounds
+    // Make sure i and j are within bounds
     if (i < 0 || j < 0 || i >= vertices || j >= vertices) return;
 
-    // If list is currently empty
-    if (!list[i]) return;
+    // Remove edge from i to j
+    if (list[i]) {
+        Node* current = list[i];
+        Node* prev = nullptr;
 
-    Node* current = list[i];
-    Node* prev = nullptr;
-
-    // If list only has 1 node
-    if (current->data == j) {
-        list[i] = current->next;
-        delete current;
-        return;
+        // Traverse the list for i to find j
+        while (current) {
+            if (current->data == j) {
+                // Found the node to remove
+                if (prev) {
+                    prev->next = current->next; // Bypass the current node
+                } else {
+                    list[i] = current->next; // Move head if first node
+                }
+                delete current; // Free the memory
+                break; // Edge is removed, exit the loop
+            }
+            prev = current;
+            current = current->next;
+        }
     }
 
-    // Traverse the list and when node is found, delete it
-    while (current) {
-        if (current->data == j) {
-            prev->next = current->next;
-            delete current;
-            return;
+    // Remove edge from j to i
+    if (list[j]) {
+        Node* current = list[j];
+        Node* prev = nullptr;
+
+        // Traverse the list for j to find i
+        while (current) {
+            if (current->data == i) {
+                // Found the node to remove
+                if (prev) {
+                    prev->next = current->next; // Bypass the current node
+                } else {
+                    list[j] = current->next; // Move head if first node
+                }
+                delete current; // Free the memory
+                break; // Edge is removed, exit the loop
+            }
+            prev = current;
+            current = current->next;
         }
-        prev = current;
-        current = current->next;
     }
 }
 
@@ -99,12 +125,13 @@ bool AdjacencyList::checkEdge(int i, int j) {
 void AdjacencyList::display() {
     for (int i=0; i<vertices; i++) {
         Node* current = list[i];
+        std::cout << i << "->";
 
         while (current) {
             std::cout << current->data << "->";
             current = current->next;
         }
-        std::cout << "nullptr" << "\n";
+        std::cout << "nullptr\n";
     }
 }
 
