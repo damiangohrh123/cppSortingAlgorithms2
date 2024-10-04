@@ -8,6 +8,9 @@ private:
 
     int hashFunction(int x);
     float loadFactor();
+
+    // Method to check and handle resizing based on load factor
+    void expand();
 public:
     HashTable(int b);
     ~HashTable();
@@ -20,9 +23,6 @@ public:
 
     // Function to display the hash table
     void displayHash();
-
-    // Method to check and handle resizing based on load factor
-    void resize();
 };
 
 HashTable::HashTable(int b) : buckets(b) {
@@ -51,9 +51,9 @@ void HashTable::insertItem(int key) {
     table[hashNumber] = key;
     size++;
 
-    // Resize if loadfactor exceeds threshold
+    // Expand if loadfactor exceeds threshold
     if (loadFactor() > 0.7f) {
-        HashTable::resize();
+        HashTable::expand();
     }
 }
 
@@ -87,7 +87,7 @@ void HashTable::displayHash() {
     std::cout << "\n";
 }
 
-void HashTable::resize() {
+void HashTable::expand() {
     // Create new table with more buckets (double in size)
     buckets *= 2;
     std::vector<int> newTable(buckets, -1);
