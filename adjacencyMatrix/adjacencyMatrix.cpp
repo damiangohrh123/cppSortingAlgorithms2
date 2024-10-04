@@ -34,6 +34,7 @@ void AdjacencyMatrix::addEdge(int i, int j) {
     if (i < 0 || j < 0 || i >= vertices || j >= vertices) return;
 
     matrix[i][j] = 1;
+    matrix[j][i] = 1;
 }
 
 void AdjacencyMatrix::removeEdge(int i, int j) {
@@ -41,11 +42,14 @@ void AdjacencyMatrix::removeEdge(int i, int j) {
     if (i < 0 || j < 0 || i >= vertices || j >= vertices) return;
 
     matrix[i][j] = 0;
+    matrix[j][i] = 0;
 }
 
 bool AdjacencyMatrix::checkEdge(int i, int j) {
     // Make sure i and j is within bounds
     if (i < 0 || j < 0 || i >= vertices || j >= vertices) return false;
+
+    if (matrix[i][j] && matrix[j][i]) return true;
 
     return matrix[i][j];
 }
