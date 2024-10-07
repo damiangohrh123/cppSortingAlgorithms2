@@ -199,9 +199,133 @@ void PrimMST::findMST(AdjacencyList& graph) {
 }
 
 void PrimMST::displayMST() {
+    std::cout << "Prim's Algorithm: \n";
     std::cout << "Edge    Weight\n";
     for (int i=1; i<parent.size(); i++) {
         std::cout << parent[i] << " - " << i << "\t" << key[i] << "\n";
+    }
+}
+
+class KruskalMST {
+private:
+    int vertices;
+    AdjacencyList& graph;
+    std::vector<std::array<int, 3>> sortedEdges(); // Sort the edges from smallest to largest
+    std::vector<int> parent;
+    std::vector<int> rank;
+    std::vector<std::array<int, 3>> mst;
+
+    // Find operation with path compression (Recursive function)
+    int findParent(int vertex);
+
+    // Union by rank
+    void unionSets(int u, int v);
+
+public:
+    KruskalMST(int v, AdjacencyList& _graph);
+    ~KruskalMST();
+
+    // Construct the MST using kruskal's algorithm
+    void constructMST();
+
+    // Display the MST
+    void displayMST();
+};
+
+KruskalMST::KruskalMST(int v, AdjacencyList& _graph) : vertices(v), graph(_graph), parent(v, -1), rank(v, 0) {
+
+}
+
+KruskalMST::~KruskalMST() {
+
+}
+
+std::vector<std::array<int, 3>> KruskalMST::sortedEdges() {
+    // Create vector of arras to store all the edges
+    std::vector<std::array<int, 3>> edges;
+    
+    // Set to track edges
+    std::set<std::pair<int, int>> seenEdges;
+    
+    // Iterate through adjacency list and store edges
+    for (int i=0; i<vertices; i++) {
+        Node* current = graph.returnList(i);
+        
+        while (current) {
+            int u = i;
+            int v = current->data;
+            int weight = current->weight;
+
+            // If edge is not found in set, add edge to edges vector, and add edge to set
+            if (seenEdges.find({std::min(u, v), std::max(u,v)}) == seenEdges.end()) {
+                edges.push_back({u, v, weight});
+                seenEdges.insert({std::min(u, v), std::max(u, v)});
+            }
+            current = current->next;
+        }
+    }
+
+    // Sort the edges
+    std::sort(edges.begin(), edges.end(), [](const std::array<int, 3>& a, const std::array<int, 3>& b) {
+        return a[2] < b[2];
+    });
+
+    return edges;
+}
+
+int KruskalMST::findParent(int vertex) {
+    // Base case
+    if (parent[vertex] == -1) {
+        return vertex;
+    }
+
+    // Recursion with path compression
+    parent[vertex] = findParent(parent[vertex]);
+
+    // Return the absolute parent
+    return parent[vertex];
+}
+
+void KruskalMST::unionSets(int u, int v) {
+    // If both vertices have the same rank, set v to be parent of u
+    if (rank[u] == rank[v]) {
+        parent[u] = v;
+        rank[v]++; // Increase the rank 
+    } else if (rank[u] < rank[v]) {
+        parent[v] = u;
+    } else {
+        parent[u] = v;
+    }
+}
+
+void KruskalMST::constructMST() {
+    // Sort the edges from smallest to largest
+    std::vector<std::array<int, 3>> edgeList = sortedEdges();
+
+    for (int i=0; i<edgeList.size(); i++) {
+        int vertex1 = edgeList[i][0];
+        int vertex2 = edgeList[i][1];
+        int weight = edgeList[i][2];
+
+        // Check the absolute parent of each vertex
+        int vertex1Parent = findParent(vertex1);
+        int vertex2Parent = findParent(vertex2);
+
+        // If vertices have different absolute parents, perform union.
+        if (vertex1Parent != vertex2Parent) {
+            unionSets(vertex1Parent, vertex2Parent);
+            
+            // Add edge to the MST
+            mst.push_back({edgeList[i]});
+        }
+    }
+}
+
+void KruskalMST::displayMST() {
+    std::cout << "Kruskal's Algorithm: \n";
+    std::cout << "Edge    Weight\n";
+    for (int i=0; i<mst.size(); i++) {
+        std::cout << mst[i][0] << " - " << mst[i][1] << "  " << mst[i][2] << "\n"; 
     }
 }
 
@@ -217,9 +341,17 @@ int main() {
     graph.addEdge(3, 5, 3);
     graph.addEdge(4, 5, 7);
     graph.display();
-    PrimMST mst(graph.returnVertices());
-    mst.findMST(graph);
-    mst.displayMST();
+
+    // Construct MST using Prim's algorithm
+    PrimMST primMst(graph.returnVertices());
+    primMst.findMST(graph);
+    primMst.displayMST();
+
+    // Construct MST using Kruskal's algorithm
+    KruskalMST kruskalMST(graph.returnVertices(), graph);
+    kruskalMST.constructMST();
+    kruskalMST.displayMST();
+    
     return 0;
 }
 
