@@ -153,7 +153,7 @@ private:
 public:
     PrimMST(int v); // Constructor to initialize the arrays and graph size
 
-    // Create tyhe MST
+    // Create the MST
     void findMST(AdjacencyList& graph);
 
     // Display the MST
@@ -329,6 +329,95 @@ void KruskalMST::displayMST() {
     }
 }
 
+class Dijkstra {
+private:
+    int vertices;
+    AdjacencyList& graph;
+    std::vector<int> parent;   // To store the parent of each vertex
+    std::vector<int> distances; // To store the shortest distance from the source vertex to each vertex
+    std::vector<bool> visited; // To track vertices already visited
+
+public:
+    Dijkstra(int v, AdjacencyList& _graph);
+
+    // Construct the shortest path from a given vertex
+    void constructPath(int v);
+
+    // Display the shortest path from a the parents vector
+    void displayShortestPath(int target);
+};
+
+// Initialize parent vector
+// Initialize the distances vector to have "infinity" values.
+// Initialize visited vector
+Dijkstra::Dijkstra(int v, AdjacencyList& _graph) : vertices(v), graph(_graph), parent(v, -1), distances(v, std::numeric_limits<int>::max()), visited(v, false) {
+
+}
+
+void Dijkstra::constructPath(int v) {
+    // Make sure v is within bounds
+    if (v < 0 || v >= vertices) return;
+
+    // Set the first vertex
+    distances[v] = 0;
+
+    // Min-heap to store pairs (total distance, vertex)
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> minHeap;
+    minHeap.push(std::make_pair(distances[v], v)); // Push 1st vertex into min heap
+    
+    while (!minHeap.empty()) {
+        // Get the vertex from the min-heap
+        int vertex = minHeap.top().second;
+        int distance = minHeap.top().first;
+        minHeap.pop(); // Remove it from the heap
+
+        // Mark the vertex as visited
+        visited[vertex] = true;
+
+        // Explore the neighbours and add to minHeap
+        Node* current = graph.returnList(vertex);
+        while (current) {
+            int neighbor = current->data;
+            int weight = current->weight;
+            int totalDistance = distance + weight;
+
+            if (!visited[neighbor] && totalDistance < distances[neighbor]) {
+                distances[neighbor] = totalDistance; // Calculate total distance
+                parent[neighbor] = vertex; // Update parent
+                minHeap.push(std::make_pair(distances[neighbor], neighbor)); // Push updated distance and vertex onto min-heap
+            }
+
+            current = current->next;
+        }
+    }
+}
+
+void Dijkstra::displayShortestPath(int target) {
+    // Ensure the target is within bounds
+    if (target < 0 || target >= vertices) {
+        std::cout << "Target vertex out of bounds." << std::endl;
+        return;
+    }
+
+    // Create a vector to store the path
+    std::vector<int> path;
+    
+    // Backtrack from target to source using the parent array
+    for (int v = target; v != -1; v = parent[v]) {
+        path.push_back(v);
+    }
+
+    // Reverse the path to get it from source to target
+    std::reverse(path.begin(), path.end());
+
+    // Display the path
+    std::cout << "Shortest path to vertex " << target << ": ";
+    for (int v : path) {
+        std::cout << v << " ";
+    }
+    std::cout << std::endl;
+}
+
 int main() {
     AdjacencyList graph(6);
     graph.addEdge(0, 1, 4);
@@ -351,7 +440,12 @@ int main() {
     KruskalMST kruskalMST(graph.returnVertices(), graph);
     kruskalMST.constructMST();
     kruskalMST.displayMST();
-    
+
+    // Construct shortest path with a given vertex using Kruskal's algorithm
+    Dijkstra dijkstra(graph.returnVertices(), graph);
+    dijkstra.constructPath(0);
+    dijkstra.displayShortestPath(4);
+
     return 0;
 }
 
