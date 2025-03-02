@@ -1,45 +1,36 @@
 #include <bits/stdc++.h>
 
-void insertionSort(int arr[], int n)
-{
-    for (int i = 0; i < n-1; i++)
-    {
+void selectionSort(std::vector<int> &vec) {
+    for (int i=0; i<vec.size(); i++) {
         int minIndex = i;
-
-        for (int j = i+1; j <= n-1; j++)
-        {
-            if (arr[j] < arr[minIndex])
-            {
+        for (int j=i+1; j<vec.size(); j++) {
+            if (vec[j] < vec[minIndex]) {
                 minIndex = j;
             }
         }
-
-        std::swap(arr[i], arr[minIndex]);
+        std::swap(vec[i], vec[minIndex]);
     }
 }
 
-// Function to print an array
-void printArray(int arr[], int size, std::string message)
-{
-    std::cout << message << "\n";
-
-    for (int i = 0; i < size; i++)
-    {
-        std::cout << arr[i] << " ";
+void printArray(std::vector<int> &vec) {
+    for (int i=0; i<vec.size(); i++) {
+        std::cout << vec[i] << " ";
     }
-
     std::cout << "\n";
 }
 
-int main()
-{
-    int arr1[] = {5, 1, 4, 8, 7, 2};
-    int arr1Length = sizeof(arr1) / sizeof(arr1[0]);
+int main() {
+    std::vector<int> myVec = {2, 8, 5, 3, 9, 4, 1};
 
-    printArray(arr1, arr1Length, "Unsorted Array: ");
-    insertionSort(arr1, arr1Length);
-    printArray(arr1, arr1Length, "Selection Sort: ");
+    std::cout << "Before Sorting: ";
+    printArray(myVec);
 
+
+    selectionSort(myVec);
+    
+
+    std::cout << "After Sorting: ";
+    printArray(myVec);
 
     return 0;
 }
