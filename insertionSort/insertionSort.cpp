@@ -1,43 +1,32 @@
 #include <bits/stdc++.h>
 
-void insertionSort(int arr[], int n)
-{
-    for (int i = 1; i <= n-1; i++)
-    {
-        int j = i-1;
-        int temp = arr[i];
-
-        while (j >= 0 && temp < arr[j])
-        {
-            arr[j + 1] = arr[j];
-            j--;
+void insertionSort(std::vector<int> &vec) {
+    for (int i=1; i<vec.size(); i++) {
+        for (int j=i; j>0; j--) {
+            if (vec[j] < vec[j-1]) {
+                int placeholder = vec[j];
+                vec[j] = vec[j-1];
+                vec[j-1] = placeholder;
+            } else {
+                break; // Stop comapring when element is in order
+            }
         }
-        arr[j + 1] = temp;
     }
 }
 
-// Function to print an array
-void printArray(int arr[], int size, std::string message)
-{
-    std::cout << message << "\n";
-
-    for (int i = 0; i < size; i++)
-    {
-        std::cout << arr[i] << " ";
+void printArray(std::vector<int> &vec) {
+    for (int i=0; i<vec.size(); i++) {
+        std::cout << vec[i] << " ";
     }
-
     std::cout << "\n";
 }
 
-int main()
-{
-    int arr1[] = {5, 1, 4, 8, 7, 2};
-    int arr1Length = sizeof(arr1) / sizeof(arr1[0]);
+int main() {
+    std::vector<int> myVec = {2, 8, 5, 3, 9, 4};
+    std::cout << "Before Sorting: ";
+    printArray(myVec);
 
-    printArray(arr1, arr1Length, "Unsorted Array: ");
-    insertionSort(arr1, arr1Length);
-    printArray(arr1, arr1Length, "Insertion Sort: ");
-
-
-    return 0;
+    insertionSort(myVec);
+    std::cout << "After Sorting: ";
+    printArray(myVec);
 }
