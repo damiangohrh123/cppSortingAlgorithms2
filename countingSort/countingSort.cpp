@@ -1,67 +1,52 @@
 #include <bits/stdc++.h>
 
-std::vector<int> countingSort(std::vector<int>& arr)
-{
+std::vector<int> countingSort(std::vector<int>& vec) {
     // Find maximum value
-    int max = arr[0];
-    for (int i = 1; i < arr.size(); i++)
-    {
-        if (arr[i] > max)
-        {
-            max = arr[i];
+    int maxVal = vec[0];
+    for (int i=1; i<vec.size(); i++) {
+        if (vec[i] > maxVal) {
+            maxVal = vec[i];
         }
     }
 
-    // Create frequency array with max + 1 elements, filled with 0
-    std::vector<int> freqArr(max + 1, 0);
-
-    // Count occurences
-    for (int i = 0; i < arr.size(); i++)
-    {
-        int number = arr[i];
-        freqArr[number] += 1;
+    // Create vector with the maximum value as its size (Frequency Vector)
+    std::vector<int> frequencyVec(maxVal + 1);
+    
+    // Count occurance of each number in vec
+    for (int i=0; i<vec.size(); i++) {
+        frequencyVec[vec[i]]++; 
     }
 
-    // Create new sorted array with orginal array size
-    std::vector<int> sortedArr;
+    // Create new vector to store sorted values
+    std::vector<int> sortedVec;
 
-    // Map to new sorted array
-    for (int i = 0; i < freqArr.size(); i++)
-    {
-        for (int j = 0; j < freqArr[i]; j++)
-        {
-            sortedArr.push_back(i);
+    // Store sorted values into sortedVec
+    for (int i=0; i<frequencyVec.size(); i++) {
+        for (int j=0; j<frequencyVec[i]; j++) {
+            sortedVec.push_back(i);
         }
     }
-
-    return sortedArr;
+    
+    return sortedVec;
 }
 
 // Function to print an array
-void printArray(std::vector<int> arr, int size, std::string message)
-{
-    std::cout << message << "\n";
-
-    for (int i = 0; i < size; i++)
-    {
-        std::cout << arr[i] << " ";
+void printArray(std::vector<int>& vec) {
+    for (int i=0; i<vec.size(); i++) {
+        std::cout << vec[i] << " ";
     }
-
     std::cout << "\n";
 }
 
 int main()
 {
-    std::vector<int> arr1 = {5, 1, 4, 8, 7, 2};
-    std::vector<int> arr2 = {2, 3, 5, 8, 2, 9, 5, 2};
+    std::vector<int> myVec = {2, 8, 5, 3, 9, 4, 1};
+    std::cout << "Before Sorting: ";
+    printArray(myVec);
 
-    printArray(arr1, arr1.size(), "Unsorted Array: ");
-    arr1 = countingSort(arr1);
-    printArray(arr1, arr1.size(), "Counting Sort: ");
-
-    printArray(arr2, arr2.size(), "Unsorted Array: ");
-    arr2 = countingSort(arr2);
-    printArray(arr2, arr2.size(), "Counting Sort: ");
+    std::vector<int> sortedVec = countingSort(myVec);
+    std::cout << "After Sorting: ";
+    printArray(sortedVec);
 
     return 0;
 }

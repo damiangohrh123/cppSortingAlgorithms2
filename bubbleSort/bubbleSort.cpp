@@ -29,4 +29,6 @@ int main() {
     bubbleSort(myVec);
     std::cout << "After Sorting: ";
     printArray(myVec);
+    
+    return 0;
 }
