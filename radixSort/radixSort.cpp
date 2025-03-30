@@ -1,90 +1,78 @@
 #include <bits/stdc++.h>
+std::vector<int> countingSort(std::vector<int>& n, int digits) {
+    std::vector<int> freqArr(10, 0);
+    std::vector<int> output(n.size());
 
-std::vector<int> radixSort(std::vector<int> &arr)
-{
-    // Get largest value
-    int maxVal = arr[0];
-    for (int i = 1; i < arr.size(); i++)
-    {
-        if (arr[i] > maxVal)
-        {
-            maxVal = arr[i];
-        }
+    // Count occurences based on digit
+    for (int i=0; i<n.size(); i++) {
+        // Get digit and update freqArr
+        int digit = (n[i] / digits ) % 10;
+        freqArr[digit]++;
     }
 
-    // Get number of digits in the largest value
-    int digits = 0;
-    while (maxVal > 0)
-    {
+    // Create a cumulative sum vector
+    for (int i=1; i<freqArr.size(); i++) {
+        freqArr[i] += freqArr[i-1];
+    }
+
+    // Build the output array by placing the elements in the correct position
+    for (int i = n.size() - 1; i >= 0; i--) {
+        // Extract the current digit again
+        int digit = (n[i] / digits) % 10; 
+
+        // Place the element at the correct position
+        output[freqArr[digit] - 1] = n[i]; // -1 because of zero-indexing
+
+        // Decrease the count for this digit
+        freqArr[digit]--;
+    }
+
+    return output;
+}
+
+std::vector<int> radixSort(std::vector<int>& n) {
+    // Get the largest value
+    int maxVal = n[0];
+    for (int i=1; i<n.size(); i++) {
+        if (n[i] > maxVal) maxVal = n[i];
+    }
+
+    // Get the largest digit
+    int maxDigits = 0;
+    while (maxVal > 0) {
         maxVal /= 10;
-        digits++;
+        maxDigits++;
     }
 
-    // Loop through each digit and perform counting sort
-    for (int i = 0; i < digits; i++)
-    {
-        // Create frequency array with 10 elements, filled with 0
-        std::vector<int> freqArr(10, 0);
+    int digits = 1;
 
-        // Count occurences based on digit
-        for (int j = 0; j < arr.size(); j++)
-        {
-            // Get digit
-            int digit = arr[j] / static_cast<int>(std::pow(10, i)) % 10;
-            freqArr[digit]++;
-        }
-
-        // Create new sorted array with orginal array size
-        std::vector<int> output(arr.size());
-
-        // Cumulative count
-        for (int j = 1; j < freqArr.size(); j++)
-        {
-            freqArr[j] += freqArr[j - 1];
-        }
-
-        // Build the output array
-        for (int j = arr.size() - 1; j >= 0; j--) // Traverse backwards for stable sorting
-        {
-            // Get digit
-            int digit = arr[j] / static_cast<int>(std::pow(10, i)) % 10;
-
-            output[freqArr[digit] - 1] = arr[j]; // -1 because of zero-indexing
-            freqArr[digit]--;
-        }
-
-        // Copy the output array to arr
-        arr = output;
+    // Iterate through each digit place
+    for (int i=0; i<maxDigits; i++) {
+        n = countingSort(n, digits);
+        digits *= 10; 
     }
 
-    return arr;
+    return n;
+
 }
 
 // Function to print an array
-void printArray(std::vector<int> arr, int size, std::string message)
-{
-    std::cout << message << "\n";
-
-    for (int i = 0; i < size; i++)
-    {
-        std::cout << arr[i] << " ";
+void printArray(std::vector<int>& vec) {
+    for (int i=0; i<vec.size(); i++) {
+        std::cout << vec[i] << " ";
     }
-
     std::cout << "\n";
 }
 
 int main()
 {
-    std::vector<int> arr1 = {5, 1, 4, 8, 7, 2};
-    std::vector<int> arr2 = {613, 218, 350, 157, 108, 457};
+    std::vector<int> myVec = {221, 8, 54, 33, 991, 4, 1};
+    std::cout << "Before Sorting: ";
+    printArray(myVec);
 
-    printArray(arr1, arr1.size(), "Unsorted Array: ");
-    arr1 = radixSort(arr1);
-    printArray(arr1, arr1.size(), "Radix Sort: ");
-
-    printArray(arr2, arr2.size(), "Unsorted Array: ");
-    arr2 = radixSort(arr2);
-    printArray(arr2, arr2.size(), "Radix Sort: ");
+    std::vector<int> sortedVec = radixSort(myVec);
+    std::cout << "After Sorting: ";
+    printArray(sortedVec);
 
     return 0;
 }
