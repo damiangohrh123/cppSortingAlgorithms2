@@ -7,7 +7,6 @@
 struct Node {
     int data;
     Node* next;
-
     Node(int val) : data(val), next(nullptr) {} 
 };
 
@@ -40,67 +39,62 @@ public:
 };
 
 Queue::Queue() {}
-
-Queue::~Queue() {}
+Queue::~Queue() {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
 
 void Queue::enqueue(int val) {
-    // Create a new node
     Node* newNode = new Node(val);
 
-    // If queue is empty
     if (isEmpty()) {
         head = newNode;
         tail = newNode;
-        return;
+    } else {
+        tail->next = newNode;
+        tail = newNode;
     }
-
-    // If queue already has elements
-    tail->next = newNode;
-    tail = newNode;
 }
 
 void Queue::dequeue() {
-    if (isEmpty()) {
+    if (!head) {
         return;
     }
-
+    Node* oldNode = head;
     head = head->next;
+    delete(oldNode);
 }
 
 int Queue::peek() {
-    if (isEmpty()) {
-        return -1;
+    if (!head) {
+        return 0;
     }
-
-    return (head->data);
+    return head->data;
 }
 
 bool Queue::isEmpty() {
-    return (head == nullptr);
+    return (!head);
 }
 
 int Queue::size() {
-    Node* current = head;
     int count = 0;
-    while (current != nullptr) {
-        count++;
+    Node* current = head;
+    while (current) {
         current = current->next;
+        count++;
     }
     return count;
 }
 
 void Queue::display() {
-    if (isEmpty()) {
-        std::cout << "Queue is empty" << "\n";
-        return;
-    }
-
     Node* current = head;
-    while (current != nullptr) {
+    while (current) {
         std::cout << current->data;
-
-        if (current != tail) {
-            std::cout << " -> ";
+        if (current->next) {
+            std::cout << "->";
         }
         current = current->next;
     }
